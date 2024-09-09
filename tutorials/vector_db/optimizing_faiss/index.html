@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Optimizing faiss - AutoGluon-RAG</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Optimizing faiss";
+        var mkdocs_page_input_path = "tutorials/vector_db/optimizing_faiss.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> AutoGluon-RAG
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../usage/">Usage</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/">Tutorials</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../evaluation/">Evaluation</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">AutoGluon-RAG</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Optimizing faiss</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h2 id="this-is-a-tutorial-on-optimizing-faiss-vector-database-for-large-scale-data">This is a tutorial on optimizing FAISS Vector Database for large scale data.</h2>
+<p>By default, AutoGluon-RAG uses the brute-force version of FAISS - <code>IndexFlatL2</code>. <code>IndexFlatL2</code> measures the L2 (or Euclidean) distance between the given query vector and all the vectors stored in the database. While this is highly accurate, it is extremely time-consuming since it has a time-complexity of $O(n)$ (where $n$ is the number of vectors stored in the database). If you have a 1M (million) vectors stored, this would result in 1M comparisons with the query vector. If you have multiple queries, this process would have to be repeated for each one.
+Thus, it is not the best option for scaling with the size of the data. To solve this, FAISS makes use of two optimized indices:</p>
+<h3 id="partitionedclustered-index">Partitioned/Clustered Index</h3>
+<p>Partitioned indices, also known as clustered indices, use clustering algorithms like k-means to partition the data into multiple clusters. This way, only a subset of clusters needs to be searched, significantly reducing the number of comparisons.</p>
+<h4 id="steps-to-create-a-partitioned-index">Steps to create a Partitioned Index:</h4>
+<pre><code class="language-python">from faiss import IndexFlatL2, IndexIVFFlat
+import faiss
+
+d = 128 # Dimension of the vectors
+nlist = 100 # Number of clusters
+
+# Initialize the quantizer
+quantizer = IndexFlatL2(d)
+# Initialize the IVF index
+index = IndexIVFFlat(quantizer, d, nlist)
+
+# Train the index with your data
+index.train(vectors) # Assuming 'vectors' is a numpy array of your data
+
+# Add vectors to the index
+index.add(vectors)
+
+# Search the index
+D, I = index.search(query_vectors, k)
+</code></pre>
+<h4 id="usage-in-autogluon-rag">Usage in AutoGluon-RAG</h4>
+<h3 id="quantized-index">Quantized Index</h3>
+<p>Quantized indices reduce the precision of the vectors to lower the memory footprint and improve search speed. Product Quantization (PQ) is a common technique used in FAISS for this purpose.</p>
+<h4 id="steps-to-create-a-quantized-index">Steps to create a Quantized Index:</h4>
+<pre><code class="language-python">from faiss import IndexFlatL2, IndexIVFPQ
+import faiss
+
+d = 128 # Dimension of the vectors
+nlist = 100 # Number of clusters
+m = 8  # number of centroid IDs in final compressed vectors
+bits = 8 # number of bits in each centroid
+
+# Initialize the quantizer
+quantizer = IndexFlatL2(d)
+# Initialize the IVFPQ index
+index = IndexIVFPQ(quantizer, d, nlist, m, bits)
+
+# Train the index with your data
+index.train(vectors) # Assuming 'vectors' is a numpy array of your data
+
+# Add vectors to the index
+index.add(vectors)
+
+# Search the index
+D, I = index.search(query_vectors, k)
+</code></pre>
+<h3 id="choosing-the-right-index">Choosing the Right Index</h3>
+<ul>
+<li><code>IndexFlatL2</code>: Use when accuracy is the primary concern, and the dataset is relatively small.</li>
+<li><code>IndexIVFFlat</code>: Use when dealing with large datasets and you need to speed up the search process while maintaining reasonable accuracy.</li>
+<li><code>IndexPQ</code>: Use when you need to optimize for memory usage and speed at the cost of some precision.</li>
+</ul>
+<h3 id="integration-into-autogluon-rag">Integration into AutoGluon-RAG</h3>
+<p>You must specify the values in your configuration file or after instantiating your <code>AutoGluonRAG</code> object. Refer to <a href="https://github.com/autogluon/autogluon-rag/tree/main/documentation/tutorials/general/setting_parameters.md">this</a> tutorial on how to modify arguments through code after instantiating an  <code>AutoGluonRAG</code> object.</p>
+<pre><code>vector_db:
+    db_type: faiss
+    faiss_index_type: IndexFlatL2, IndexIVFFlat, or IndexIVFPQ
+    faiss_quantized_index_params: Parameters to pass into IndexIVFPQ (d, nlist, m, bits)
+    faiss_clustered_index_params: Parameters to pass into IndexIVFFlat (d, nlist)
+    faiss_index_nprobe: Set nprobe value. This defines how many nearby cells to search. It is applicable for both IndexIVFFlat and IndexIVFPQ
+</code></pre>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

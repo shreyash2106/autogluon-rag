@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Evaluation - AutoGluon-RAG</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Evaluation";
+        var mkdocs_page_input_path = "evaluation.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> AutoGluon-RAG
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../usage/">Usage</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../tutorial/">Tutorials</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Evaluation</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#initialization">Initialization</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#arguments-to-evaluation-module">Arguments to Evaluation Module</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#agrag">agrag</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#autogluon-rag-for-large-datasets">AutoGluon-RAG for Large Datasets</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#arguments-to-run_evaluation-function">Arguments to run_evaluation function</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#note">NOTE</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dataset_name">dataset_name</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#metrics">metrics</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#metric_score_params">metric_score_params</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#metric_init_params">metric_init_params</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#preprocessing_fn">preprocessing_fn</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#query_fn">query_fn</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#response_fn">response_fn</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#hf_dataset_params">hf_dataset_params</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#split">split</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#save_evaluation_data">save_evaluation_data</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#evaluation_dir">evaluation_dir</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#save_csv_path">save_csv_path</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#max_eval_size">max_eval_size</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#using-a-custom-dataset">Using a Custom Dataset</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">AutoGluon-RAG</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Evaluation</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="autogluon-rag-evaluation-module">AutoGluon-RAG Evaluation Module</h1>
+<h2 id="overview">Overview</h2>
+<p>The <code>EvaluationModule</code> in AutoGluon-RAG is designed to facilitate the evaluation of the Retrieval-Augmented Generation (RAG) pipeline. This module allows users to easily assess the performance of the RAG pipeline using various datasets and evaluation metrics. The primary purpose of this module is to provide a flexible and extensible framework for evaluating the quality and effectiveness of the generated responses by the RAG pipeline.</p>
+<p>The <code>EvaluationModule</code> is created to:</p>
+<ol>
+<li>Simplify the evaluation process for the AutoGluon-RAG pipeline.</li>
+<li>Support multiple evaluation metrics, including custom metrics.</li>
+<li>Provide functionality to save evaluation data and results.</li>
+<li>Allow users to preprocess data, extract queries, and expected responses from various datasets.</li>
+</ol>
+<h2 id="usage">Usage</h2>
+<h3 id="initialization">Initialization</h3>
+<p>To initialize the <code>EvaluationModule</code>, you need to provide an instance of <code>AutoGluonRAG</code>, the name of the dataset, a list of metrics, and additional optional parameters such as preprocessing functions and paths for saving evaluation data.</p>
+<pre><code class="language-python">from agrag.agrag import AutoGluonRAG
+from agrag.evaluation.evaluator import EvaluationModule
+from module import preprocessing_fn, query_fn, response_fn
+
+evaluation_dir = &quot;evaluation_data&quot;
+agrag = AutoGluonRAG(preset_quality=&quot;medium_quality&quot;, data_dir=evaluation_dir)
+evaluator = EvaluationModule(rag_instance=agrag)
+evaluator.run_evaluation(
+    dataset_name=&quot;huggingface_dataset/dataset_name&quot;,
+    metrics=[&quot;exact_match&quot;, &quot;transformer_matcher&quot;],
+    save_evaluation_data=True,
+    evaluation_dir=evaluation_dir,
+    preprocessing_fn=preprocessing_fn,
+    query_fn=query_fn,
+    response_fn=response_fn,
+    hf_dataset_params={&quot;name&quot;: &quot;dev&quot;},
+)
+</code></pre>
+<p>Refer to <code>src/agrag/evaluation/datasets/google_natural_questions/evaluate_agrag.py</code> for a detailed example of how to evaluate AutoGluon-RAG on the Google Natural Questions dataset from HuggingFace.</p>
+<h2 id="arguments-to-evaluation-module">Arguments to Evaluation Module</h2>
+<h3 id="agrag">agrag</h3>
+<p><strong>Type</strong>: <code>AutoGluonRAG</code><br />
+<strong>Description</strong>: The AutoGluonRAG instance to be evaluated.</p>
+<pre><code class="language-python">from agrag.agrag import AutoGluonRAG
+
+agrag = AutoGluonRAG(preset_quality=&quot;medium_quality&quot;, data_dir=evaluation_dir)
+# Calling agrag.initialize_rag_pipeline() is optional since the EvaluationModule will initialize the pipeline if it has not been done already.
+</code></pre>
+<h2 id="autogluon-rag-for-large-datasets">AutoGluon-RAG for Large Datasets</h2>
+<p>For large datasets, a naive version of AutoGluon-RAG may not be sufficient. Here are some steps you can take when working with a large corpus for RAG:</p>
+<ol>
+<li>
+<p>Using optimized indices for Vector DB. Refer to the documentation for the supported vector databases on how you can use optimized indices such as clustered and quantized databases. Set the parameters appropriately in your configuration file. </p>
+<p>For example, here is an optimized FAISS setup (in the configuration file) using quantization that runs correctly for the Google Natural Questions dataset:</p>
+<pre><code>vector_db:
+db_type: faiss
+faiss_index_type: IndexIVFPQ
+faiss_quantized_index_params:
+    nlist: 50
+    m: 8
+    bits: 8
+faiss_index_nprobe: 15
+</code></pre>
+</li>
+<li>
+<p>Use GPUs: Make sure to use GPUs appropriately in each module (wherever applicable). You can set the <code>num_gpus</code> parameter in the configuration file under each module.</p>
+</li>
+<li>
+<p>System Memory: Make sure your system has enough RAM for at least the size of the dataset. You will require more memory for the documents that will be generated from the datasets, the embeddings, the metadata, and the vector db index. We recommend running evaluation on a remote instance (such as AWS EC2) instead of running locally. If you would like to run locally, you can choose to run a subset of the evaluation data by setting <code>max_eval_size</code> when calling the <code>run_evaluation</code> function (see the next section).</p>
+</li>
+</ol>
+<h2 id="arguments-to-run_evaluation-function">Arguments to <code>run_evaluation</code> function</h2>
+<h3 id="note">NOTE</h3>
+<p>Every time you run the <code>run_evaluation</code> function, you may need to set the <code>agrag.data_dir</code> parameter if you change the dataset being used. In that case, you will have to reinitialize the RAG pipeline. </p>
+<p>Alternatively, you can index all your evaluation datasets at once, or create multiple instances of <code>AutoGluonRAG</code>.</p>
+<hr />
+<h3 id="dataset_name">dataset_name</h3>
+<p><strong>Type</strong>: <code>str</code><br />
+<strong>Description</strong>: The name of the dataset to use for evaluation.</p>
+<h3 id="metrics">metrics</h3>
+<p><strong>Type</strong>: <code>List[Union[str, Callable]]</code><br />
+<strong>Description</strong>: The list of metrics to use for evaluation. Supported metrics include:</p>
+<ul>
+<li><code>"bertscore"</code>: Uses the <a href="https://huggingface.co/spaces/evaluate-metric/bertscore">BERTScore metric</a> from HuggingFace.</li>
+<li><code>"bleu"</code>: Uses the <a href="https://huggingface.co/spaces/evaluate-metric/bleu">BLEU metric</a> from HuggingFace</li>
+<li><code>"hf_exact_match"</code> Uses the <a href="https://huggingface.co/spaces/evaluate-metric/exact_match">Exact Match Metric</a> from HuggingFace</li>
+<li>
+<p><code>"inclusive_exact_match"</code>: Uses the Inclusive Exact Match metric. This is a custom metric defined in this module since it is a bit more lenient compared to the HuggingFace <code>exact_match</code> metric. It also counts events where the expected response is contained within the generated response as a success. This metric supports the following optional parameters:</p>
+<ul>
+<li><code>regexes_to_ignore</code> (List[str], optional): A list of regex expressions of characters to ignore when calculating the exact matches. Defaults to <code>None</code>. Note: the regex changes are applied before capitalization is normalized.</li>
+<li><code>ignore_case</code> (bool, optional): If <code>True</code>, turns everything to lowercase so that capitalization differences are ignored. Defaults to <code>False</code>.</li>
+<li><code>ignore_punctuation</code> (bool, optional): If <code>True</code>, removes punctuation before comparing strings. Defaults to <code>False</code>.</li>
+<li><code>ignore_numbers</code> (bool, optional): If <code>True</code>, removes all digits before comparing strings. Defaults to <code>False</code>.</li>
+</ul>
+</li>
+<li>
+<p><code>"pedant"</code>: Uses the PEDANT metric from <a href="https://github.com/zli12321/qa_metrics">QA Metrics</a>.</p>
+</li>
+<li><code>"transformer_matcher"</code>: Uses the Transformer Matcher metric from <a href="https://github.com/zli12321/qa_metrics">QA Metrics</a>.</li>
+<li><code>&lt;callable_custom_metric&gt;</code>: Any callable Python function or a function from a Python package. It must take in at least the arguments <code>predictions</code> and <code>references</code>, where <code>predictions</code> is a <code>List</code> of generated responses and <code>references</code> is a <code>List[List]</code> of expected responses.</li>
+</ul>
+<h3 id="metric_score_params">metric_score_params</h3>
+<p><strong>Type</strong>: <code>dict</code>
+<strong>Description</strong>: Optional, additional parameters to pass into evaluation metric functions when computing scores.</p>
+<h3 id="metric_init_params">metric_init_params</h3>
+<p><strong>Type</strong>: <code>dict</code>
+<strong>Description</strong>: Optional, additional parameters to pass into evaluation metric functions when initializing the functions.</p>
+<h3 id="preprocessing_fn">preprocessing_fn</h3>
+<p><strong>Type</strong>: <code>Callable</code><br />
+<strong>Description</strong>: A function to preprocess the content before saving. This must be a function that returns the relevant content from the dataset row. For example, to extract text from the Google Natural Questions dataset, you can pass in this function as <code>preprocessing_fn</code>:</p>
+<pre><code class="language-python">def preprocess_google_nq(row):
+    &quot;&quot;&quot;
+    Extracts text from HTML content for the Google NQ dataset.
+
+    Parameters:
+    ----------
+    row : dict
+        A row from the Google NQ dataset containing HTML content.
+
+    Returns:
+    -------
+    str
+        The extracted text content.
+    &quot;&quot;&quot;
+    html_content = row[&quot;document&quot;][&quot;html&quot;]
+    return extract_text_from_html(html_content) # Function to extract text from HTML
+</code></pre>
+<h3 id="query_fn">query_fn</h3>
+<p><strong>Type</strong>: <code>Callable</code><br />
+<strong>Description</strong>: A function to extract the query from the dataset row.  For example, to extract the query from the Google Natural Questions dataset, you can pass in this function as <code>query_fn</code>:</p>
+<pre><code class="language-python">def get_google_nq_query(row):
+    &quot;&quot;&quot;
+    Extracts the query from a row in the Google NQ dataset.
+
+    Parameters:
+    ----------
+    row : dict
+        A row from the Google NQ dataset.
+
+    Returns:
+    -------
+    str
+        The query.
+    &quot;&quot;&quot;
+    return row[&quot;question&quot;][&quot;text&quot;]
+</code></pre>
+<h3 id="response_fn">response_fn</h3>
+<p><strong>Type</strong>: <code>Callable</code><br />
+<strong>Description</strong>: A function to extract the expected responses from the dataset row. For example, to extract the expected responses from the Google Natural Questions dataset, you can pass in this function as <code>query_fn</code>:</p>
+<pre><code class="language-python">def get_google_nq_responses(row):
+    &quot;&quot;&quot;
+    Extracts the expected responses from a row in the Google NQ dataset.
+
+    Parameters:
+    ----------
+    row : dict
+        A row from the Google NQ dataset.
+
+    Returns:
+    -------
+    List[str]
+        A list of expected responses.
+    &quot;&quot;&quot;
+    short_answers = row[&quot;annotations&quot;][&quot;short_answers&quot;]
+    return [answer[&quot;text&quot;][0] for answer in short_answers if answer[&quot;text&quot;]]
+</code></pre>
+<h3 id="hf_dataset_params">hf_dataset_params</h3>
+<p><strong>Type</strong>: <code>dict</code><br />
+<strong>Description</strong>: Additional parameters to pass into the HuggingFace load_dataset function.</p>
+<h3 id="split">split</h3>
+<p><strong>Type</strong>: <code>str</code><br />
+<strong>Description</strong>: The dataset split to use (default is "validation").</p>
+<h3 id="save_evaluation_data">save_evaluation_data</h3>
+<p><strong>Type</strong>: <code>bool</code><br />
+<strong>Description</strong>: Whether to save evaluation data to files (default is True). Set this to False if you already have a directory of evaluation files to pass into AutoGluon RAG.</p>
+<h3 id="evaluation_dir">evaluation_dir</h3>
+<p><strong>Type</strong>: <code>str</code><br />
+<strong>Description</strong>: The directory for evaluation data (default is "./evaluation_data").</p>
+<h3 id="save_csv_path">save_csv_path</h3>
+<p><strong>Type</strong>: <code>str</code><br />
+<strong>Description</strong>: The path to save the evaluation results as a CSV file (default is None). If no path is provided, the evaluation results will not be saved.</p>
+<h3 id="max_eval_size">max_eval_size</h3>
+<p><strong>Type</strong>: <code>int</code>, optional<br />
+<strong>Description</strong>: The maximum number of datapoints to process for evaluation (default is None). If this value is not less than the total number of datapoints (rows), the entire dataset will be used.</p>
+<h2 id="using-a-custom-dataset">Using a Custom Dataset</h2>
+<p>If you would like to use your own dataset, you must structure it with following columns:</p>
+<ol>
+<li>"content": Column containing document content (in the form of plaintext) that will be extracted and passed into the RAG pipeline</li>
+<li>"query": Column containing a singular query for each document that will be passed into the generator.</li>
+<li>"expected_responses": A list of expected responses for each query that will be used for evaluation.</li>
+</ol>
+<p>For the parameters <code>preprocessing_fn</code>, <code>query_fn</code>, <code>response_fn</code>, the <code>EvaluationModule</code> will use the functions in <code>src/agrag/evaluation/dataset_utils.py</code> by default.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../tutorial/" class="btn btn-neutral float-left" title="Tutorials"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../tutorial/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

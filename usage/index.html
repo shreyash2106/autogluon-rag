@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Usage - AutoGluon-RAG</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Usage";
+        var mkdocs_page_input_path = "usage.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> AutoGluon-RAG
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Usage</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#use-autogluon-rag-through-the-command-line-as-agrag">Use AutoGluon-RAG through the command line as agrag:</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#use-autogluon-rag-through-code">Use AutoGluon-RAG through code:</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#configuring-parameters-for-autogluon-rag">Configuring Parameters for AutoGluon-RAG:</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#using-autogluonrag-class">Using AutoGluonRAG class</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#using-configuration-file">Using Configuration File</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../tutorial/">Tutorials</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../evaluation/">Evaluation</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">AutoGluon-RAG</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Usage</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h2 id="usage">Usage</h2>
+<p>To use this framework, you must first install AutoGluon RAG:</p>
+<pre><code class="language-python">git clone https://github.com/autogluon/autogluon-rag
+cd autogluon-rag
+
+# Create a Virtual Environment (using Python, or conda if you prefer)
+python3 -m virtualenv venv
+source venv/bin/activate
+
+#Install the package
+pip install -e .
+</code></pre>
+<p>You can now use the package in two ways. </p>
+<h3 id="use-autogluon-rag-through-the-command-line-as-agrag">Use AutoGluon-RAG through the command line as <code>agrag</code>:</h3>
+<pre><code class="language-python">AutoGluon-RAG
+
+
+usage: agrag [-h] --config_file
+
+AutoGluon-RAG - Retrieval-Augmented Generation Pipeline
+
+options:
+  -h, --help        show this help message and exit
+  --config_file        Path to the configuration file 
+</code></pre>
+<h3 id="use-autogluon-rag-through-code">Use AutoGluon-RAG through code:</h3>
+<pre><code class="language-python">from agrag.agrag import AutoGluonRAG
+
+
+def ag_rag():
+    agrag = AutoGluonRAG(
+        preset_quality=&quot;medium_quality&quot;, # or path to config file
+        web_urls=[&quot;https://auto.gluon.ai/stable/index.html&quot;],
+        base_urls=[&quot;https://auto.gluon.ai/stable/&quot;],
+        parse_urls_recursive=True,
+        data_dir=&quot;s3://autogluon-rag-github-dev/autogluon_docs/&quot;
+    )
+    agrag.initialize_rag_pipeline()
+    agrag.generate_response(&quot;What is AutoGluon?&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    ag_rag()
+</code></pre>
+<h3 id="configuring-parameters-for-autogluon-rag">Configuring Parameters for AutoGluon-RAG:</h3>
+<h4 id="using-autogluonrag-class">Using <code>AutoGluonRAG</code> class</h4>
+<p>For a list of configurable parameters that can be passed into the <code>AutoGluonRAG</code> class, refer to the tutorial <a href="../tutorials/general/code_parameters/">here</a>. </p>
+<h4 id="using-configuration-file">Using Configuration File</h4>
+<p>You can also use a configuration file with <code>AutoGluonRAG</code>.
+The configuration file contains the specific parameters to use for each module in the RAG pipeline. For an example of a config file, please refer to <code>example_config.yaml</code> in <code>src/agrag/configs/</code>. For specific details about the parameters in each individual module, refer to the <code>README</code> files in each module in <code>src/agrag/modules/</code>.</p>
+<p>There is also a <code>shared</code> section in the config file for parameters that do not refer to a specific module. Currently, the parameters in <code>shared</code> are: </p>
+<pre><code class="language-python">pipeline_batch_size: Optional batch size to use for pre-processing stage (Data Processing, Embedding, Vector DB Module). This represents the number of files in each batch. The default value is 20.
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href=".." class="btn btn-neutral float-left" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../tutorial/" class="btn btn-neutral float-right" title="Tutorials">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../tutorial/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

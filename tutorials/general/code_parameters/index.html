@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Code parameters - AutoGluon-RAG</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Code parameters";
+        var mkdocs_page_input_path = "tutorials/general/code_parameters.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> AutoGluon-RAG
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../usage/">Usage</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/">Tutorials</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../evaluation/">Evaluation</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">AutoGluon-RAG</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Code parameters</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h2 id="this-is-a-tutorial-on-the-optional-parameters-that-can-be-passed-into-the-autogluonrag-class-when-using-the-package-through-code">This is a tutorial on the optional parameters that can be passed into the <code>AutoGluonRAG</code> class when using the package through code.</h2>
+<p>These are the <b>optional</b> parameters that can be passed into the <code>AutoGluonRAG</code> class:</p>
+<pre><code class="language-python">config_file : str
+    Path to a configuration file that will be used to set specific parameters in the RAG pipeline.
+
+preset_quality : str
+    If you do not wish to use your own configuration file, you can use a preset configuration file which contains pre-defined arguments.
+    You must provide the preset quality setting (&quot;good_quality&quot;, &quot;medium_quality&quot;, or, &quot;best_quality&quot;). Note that if both config_file and preset_quality are provided, config_file will be prioritized.  
+
+model_ids : dict
+    Dictionary of model IDs to use for specific modules.
+    Example: {&quot;generator_model_id&quot;: &quot;mistral.mistral-7b-instruct-v0:2&quot;, &quot;retriever_model_id&quot;: &quot;BAAI/bge-large-en&quot;, &quot;reranker_model_id&quot;: &quot;nv_embed&quot;}
+
+data_dir : str
+    The directory containing the data files that will be used for the RAG pipeline. If this value is not provided when initializing the object, it must be provided in the config file. If both are provided, the value in the class instantiation will be prioritized. 
+
+web_urls : List[str] 
+    List of website URLs to be ingested and processed. Each URL will processed recursively based on the base URL to include the content of URLs that exist within this URL.
+    If this value is not provided when initializing the object, it must be provided in the config file. If both are provided, the value in the class instantiation will be prioritized.
+
+base_urls : List[str]
+    List of optional base URLs to check for links recursively. The base URL controls which URLs will be processed during recursion. The base_url does not need to be the same as the web_url. For example. the web_url can be &quot;https://auto.gluon.ai/stable/index.html&quot;, and the base_urls will be &quot;https://auto.gluon.ai/stable/&quot;.
+    If this value is not provided when initializing the object, it must be provided in the config file. If both are provided, the value in the class instantiation will be prioritized.
+
+login_info: dict
+    A dictionary containing login credentials for each URL. Required if the target URL requires authentication.
+    Must be structured as {target_url: {&quot;login_url&quot;: &lt;login_url&gt;, &quot;credentials&quot;: {&quot;username&quot;: &quot;your_username&quot;, &quot;password&quot;: &quot;your_password&quot;}}}
+    The target_url is a url that is present in the list of web_urls
+
+parse_urls_recursive: bool
+    Whether to parse each URL in the provided recursively. Setting this to True means that the child links present in each parent webpage will also be processed.
+
+pipeline_batch_size: int
+    Batch size to use for pre-processing stage (Data Processing, Embedding, Vector DB Module). This represents the number of files in each batch.
+    The default value is 20.
+</code></pre>
+<p><strong>Note</strong>: You may provide both <code>data_dir</code> and <code>web_urls</code>.</p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
